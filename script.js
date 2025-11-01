@@ -161,8 +161,9 @@ function addPet() {
     toggleForm('pet-form');
     document.querySelector('.pet-form-content').reset();
     
-    // Thông báo thành công
+    // Hiển thị thông báo và dialog thành công
     showNotification(`Pet "${name}" đã được thêm thành công!`, 'success');
+    showSuccessDialog('Pet Added Successfully!', `${name} (${type}) has been added to the system.`);
 }
 
 // UC.2.3: Update Pet
@@ -189,7 +190,8 @@ function updatePetPrompt(id) {
     pet.age = newAge ? parseInt(newAge) : pet.age;
     
     renderPetList();
-    showNotification(`Pet ID ${id} đã được cập nhật!`, 'success');
+    showNotification(`Pet "${pet.name}" đã được cập nhật!`, 'success');
+    showSuccessDialog('Pet Updated Successfully!', `${pet.name} information has been updated.`);
 }
 
 // UC.2.4: Delete Pet
@@ -197,11 +199,19 @@ function deletePet(id) {
     const pet = pets.find(p => p.id === id);
     if (!pet) return;
     
-    if (confirm(`Bạn có chắc chắn muốn xóa Pet "${pet.name}" (ID: ${id})?`)) {
-        pets = pets.filter(p => p.id !== id);
-        renderPetList();
-        showNotification(`Pet "${pet.name}" đã được xóa!`, 'success');
-    }
+    showConfirmDialog(
+        'Delete Pet Confirmation',
+        `Are you sure you want to delete "${pet.name}" (${pet.type})? This action cannot be undone.`,
+        () => {
+            pets = pets.filter(p => p.id !== id);
+            renderPetList();
+            if (charts.petType) {
+                refreshCharts();
+            }
+            showNotification(`Pet "${pet.name}" đã được xóa!`, 'success');
+            showSuccessDialog('Pet Deleted Successfully!', `${pet.name} has been removed from the system.`);
+        }
+    );
 }
 
 // === INVOICE MANAGEMENT FUNCTIONS (UC.3.0 - UC.3.5) ===
@@ -244,17 +254,13 @@ function viewInvoiceDetail(id) {
     const invoice = invoices.find(i => i.id === id);
     if (!invoice) return;
     
-    const detailMessage = `
-=== CHI TIẾT HÓA ĐƠN (UC.3.1) ===
-ID: ${invoice.id}
-Khách hàng: ${invoice.customer}
-Số tiền: $${invoice.amount.toLocaleString()}
-Chi tiết dịch vụ: ${invoice.detail}
-Ngày tạo: ${invoice.date}
-=================================
-    `;
+    const detailMessage = `Invoice Details:
+• Customer: ${invoice.customer}
+• Amount: $${invoice.amount.toLocaleString()}
+• Service: ${invoice.detail}
+• Date: ${invoice.date}`;
     
-    alert(detailMessage);
+    showSuccessDialog(`Invoice #${invoice.id} Details`, detailMessage);
 }
 
 // UC.3.2: Search Invoice
@@ -294,8 +300,9 @@ function addInvoice() {
     toggleForm('invoice-form');
     document.querySelector('.invoice-form-content').reset();
     
-    // Thông báo thành công
+    // Hiển thị thông báo và dialog thành công
     showNotification(`Hóa đơn cho "${customer}" đã được tạo thành công!`, 'success');
+    showSuccessDialog('Invoice Created Successfully!', `Invoice #${newInvoice.id} for ${customer} ($${amount}) has been created.`);
 }
 
 // UC.3.4: Update Invoice
@@ -314,7 +321,7 @@ function updateInvoicePrompt(id) {
 
     // Validate amount
     if (newAmount && isNaN(parseFloat(newAmount))) {
-        alert("Số tiền không hợp lệ. Cập nhật đã bị hủy.");
+        showNotification("Số tiền không hợp lệ. Vui lòng nhập số hợp lệ.", 'error');
         return;
     }
 
@@ -324,7 +331,8 @@ function updateInvoicePrompt(id) {
     invoice.detail = newDetail || invoice.detail;
     
     renderInvoiceList();
-    showNotification(`Invoice ID ${id} đã được cập nhật!`, 'success');
+    showNotification(`Invoice #${id} đã được cập nhật!`, 'success');
+    showSuccessDialog('Invoice Updated Successfully!', `Invoice #${id} for ${invoice.customer} has been updated.`);
 }
 
 // Delete Invoice
@@ -332,11 +340,19 @@ function deleteInvoice(id) {
     const invoice = invoices.find(i => i.id === id);
     if (!invoice) return;
     
-    if (confirm(`Bạn có chắc chắn muốn xóa Invoice ID ${id} của khách hàng "${invoice.customer}"?`)) {
-        invoices = invoices.filter(i => i.id !== id);
-        renderInvoiceList();
-        showNotification(`Invoice ID ${id} đã được xóa!`, 'success');
-    }
+    showConfirmDialog(
+        'Delete Invoice Confirmation',
+        `Are you sure you want to delete Invoice #${id} for "${invoice.customer}" ($${invoice.amount})? This action cannot be undone.`,
+        () => {
+            invoices = invoices.filter(i => i.id !== id);
+            renderInvoiceList();
+            if (charts.revenueTrend) {
+                refreshCharts();
+            }
+            showNotification(`Invoice #${id} đã được xóa!`, 'success');
+            showSuccessDialog('Invoice Deleted Successfully!', `Invoice #${id} for ${invoice.customer} has been removed from the system.`);
+        }
+    );
 }
 
 // UC.3.5: Print Invoice
@@ -344,18 +360,10 @@ function printInvoice(id) {
     const invoice = invoices.find(i => i.id === id);
     if (!invoice) return;
     
-    const printContent = `
-=== HÓA ĐƠN PETCARE ===
-ID: ${invoice.id}
-Ngày: ${invoice.date}
-Khách hàng: ${invoice.customer}
-Dịch vụ: ${invoice.detail}
-Tổng tiền: $${invoice.amount.toLocaleString()}
-========================
-In hóa đơn thành công! (UC.3.5)
-    `;
+    // Simulate print action
+    showNotification(`Invoice #${id} đã được gửi đến máy in!`, 'success');
+    showSuccessDialog('Invoice Printed Successfully!', `Invoice #${id} for ${invoice.customer} ($${invoice.amount.toLocaleString()}) has been sent to the printer.`);
     
-    alert(printContent);
     console.log('Print Invoice:', invoice);
 }
 
@@ -622,12 +630,122 @@ function refreshCharts() {
     initializeCharts();
 }
 
-// === UTILITY FUNCTIONS ===
+// === NOTIFICATION SYSTEM ===
 
-// Hiển thị thông báo
-function showNotification(message, type = 'info') {
-    // Tạo element thông báo (có thể cải tiến thành toast notification)
-    alert(message);
+// Hiển thị toast notification
+function showNotification(message, type = 'info', title = '') {
+    const container = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    
+    // Set notification class based on type
+    notification.className = `notification ${type}`;
+    
+    // Choose icon based on type
+    const icons = {
+        'success': 'fas fa-check-circle',
+        'error': 'fas fa-exclamation-circle',
+        'warning': 'fas fa-exclamation-triangle',
+        'info': 'fas fa-info-circle'
+    };
+    
+    // Set default titles
+    const defaultTitles = {
+        'success': 'Success!',
+        'error': 'Error!',
+        'warning': 'Warning!',
+        'info': 'Info'
+    };
+    
+    const finalTitle = title || defaultTitles[type];
+    const iconClass = icons[type] || icons['info'];
+    
+    notification.innerHTML = `
+        <div class="notification-icon">
+            <i class="${iconClass}"></i>
+        </div>
+        <div class="notification-content">
+            <h4>${finalTitle}</h4>
+            <p>${message}</p>
+        </div>
+        <button class="notification-close" onclick="removeNotification(this)">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    container.appendChild(notification);
+    
+    // Trigger animation
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        removeNotification(notification.querySelector('.notification-close'));
+    }, 5000);
+}
+
+// Remove notification
+function removeNotification(closeBtn) {
+    const notification = closeBtn.closest('.notification');
+    notification.classList.remove('show');
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 300);
+}
+
+// Show success dialog
+function showSuccessDialog(title, message) {
+    const overlay = document.getElementById('success-dialog-overlay');
+    const titleEl = document.getElementById('success-title');
+    const messageEl = document.getElementById('success-message');
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close success dialog
+function closeSuccessDialog() {
+    const overlay = document.getElementById('success-dialog-overlay');
+    overlay.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+// Show confirmation dialog
+function showConfirmDialog(title, message, onConfirm) {
+    const overlay = document.getElementById('confirm-dialog-overlay');
+    const titleEl = document.getElementById('confirm-title');
+    const messageEl = document.getElementById('confirm-message');
+    const confirmBtn = document.getElementById('confirm-yes-btn');
+    
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    // Remove existing event listeners
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    // Add new event listener
+    newConfirmBtn.addEventListener('click', () => {
+        closeConfirmDialog();
+        if (onConfirm) {
+            onConfirm();
+        }
+    });
+    
+    overlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close confirmation dialog
+function closeConfirmDialog() {
+    const overlay = document.getElementById('confirm-dialog-overlay');
+    overlay.classList.remove('show');
+    document.body.style.overflow = 'auto';
 }
 
 // === KHỞI TẠO ỨNG DỤNG ===
@@ -656,10 +774,12 @@ document.addEventListener('DOMContentLoaded', () => {
         addInvoice();
     });
     
-    // Event listener cho ESC key để đóng modal
+    // Event listener cho ESC key để đóng modal và dialogs
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             closeAllModals();
+            closeSuccessDialog();
+            closeConfirmDialog();
         }
     });
     

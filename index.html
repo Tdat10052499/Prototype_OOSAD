@@ -121,9 +121,9 @@
         <div id="pets-page" class="page">
             <div class="page-container">
                 <div class="page-header">
-                    <h2 class="page-title">🐶 Pet Management (UC.2.0 - UC.2.4)</h2>
+                    <h2 class="page-title">🐶 Pet Management</h2>
                     <button class="btn-primary" onclick="toggleForm('pet-form')">
-                        <i class="fas fa-plus"></i> Add New Pet (UC.2.2)
+                        <i class="fas fa-plus"></i> Add New Pet
                     </button>
                 </div>
 
@@ -170,13 +170,13 @@
                 <div class="search-section">
                     <div class="search-bar">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="search-pet" onkeyup="searchPet()" placeholder="Search Pet by Name (UC.2.1)">
+                        <input type="text" id="search-pet" onkeyup="searchPet()" placeholder="Search Pet by Name">
                     </div>
                 </div>
 
                 <!-- Pet Table -->
                 <div class="table-container">
-                    <h3>Pet List (UC.2.0)</h3>
+                    <h3>Pet List</h3>
                     <div class="table-wrapper">
                         <table id="pet-table" class="data-table">
                             <thead>
@@ -201,9 +201,9 @@
         <div id="invoices-page" class="page">
             <div class="page-container">
                 <div class="page-header">
-                    <h2 class="page-title">🧾 Invoice Management (UC.3.0 - UC.3.5)</h2>
+                    <h2 class="page-title">🧾 Invoice Management </h2>
                     <button class="btn-primary" onclick="toggleForm('invoice-form')">
-                        <i class="fas fa-plus"></i> Add New Invoice (UC.3.3)
+                        <i class="fas fa-plus"></i> Add New Invoice 
                     </button>
                 </div>
 
@@ -239,13 +239,13 @@
                 <div class="search-section">
                     <div class="search-bar">
                         <i class="fas fa-search"></i>
-                        <input type="text" id="search-invoice" onkeyup="searchInvoice()" placeholder="Search Invoice by Customer (UC.3.2)">
+                        <input type="text" id="search-invoice" onkeyup="searchInvoice()" placeholder="Search Invoice by Customer">
                     </div>
                 </div>
 
                 <!-- Invoice Table -->
                 <div class="table-container">
-                    <h3>Invoice List (UC.3.0)</h3>
+                    <h3>Invoice List</h3>
                     <div class="table-wrapper">
                         <table id="invoice-table" class="data-table">
                             <thead>
@@ -321,6 +321,38 @@
 
     <!-- Modal Overlays -->
     <div class="modal-overlay" id="modal-overlay" onclick="closeAllModals()"></div>
+
+    <!-- Notification System -->
+    <div class="notification-container" id="notification-container">
+        <!-- Notifications will be dynamically added here -->
+    </div>
+
+    <!-- Success Dialog -->
+    <div class="success-dialog-overlay" id="success-dialog-overlay">
+        <div class="success-dialog">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 id="success-title">Success!</h3>
+            <p id="success-message">Operation completed successfully.</p>
+            <button class="btn-primary" onclick="closeSuccessDialog()">OK</button>
+        </div>
+    </div>
+
+    <!-- Confirmation Dialog -->
+    <div class="confirm-dialog-overlay" id="confirm-dialog-overlay">
+        <div class="confirm-dialog">
+            <div class="confirm-icon">
+                <i class="fas fa-question-circle"></i>
+            </div>
+            <h3 id="confirm-title">Confirm Action</h3>
+            <p id="confirm-message">Are you sure you want to proceed?</p>
+            <div class="confirm-actions">
+                <button class="btn-secondary" onclick="closeConfirmDialog()">Cancel</button>
+                <button class="btn-danger" id="confirm-yes-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
