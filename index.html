@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PETCARE - Staff Management System</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Logo và Tên -->
+            <div class="logo-section">
+                <img src="img/PetCare_Logo_300x76 (1).png" alt="PETCARE Logo" class="logo">
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" onclick="showPage('dashboard')" class="nav-link active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a></li>
+                    <li><a href="#" onclick="showPage('pets')" class="nav-link">
+                        <i class="fas fa-paw"></i> Pet Categories
+                    </a></li>
+                    <li><a href="#" onclick="showPage('invoices')" class="nav-link">
+                        <i class="fas fa-file-invoice"></i> Invoices
+                    </a></li>
+                </ul>
+            </nav>
+
+            <!-- User Info -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <span class="user-name">Admin User</span>
+                    <span class="user-role">Staff Manager</span>
+                </div>
+                <div class="user-actions">
+                    <i class="fas fa-cog" title="Settings"></i>
+                    <i class="fas fa-sign-out-alt" title="Logout"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb-container">
+            <nav class="breadcrumb">
+                <span class="breadcrumb-item">
+                    <i class="fas fa-home"></i> Home
+                </span>
+                <span class="breadcrumb-separator">/</span>
+                <span class="breadcrumb-item active" id="current-page">Dashboard</span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- BODY -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page active">
+            <div class="dashboard-container">
+                <h2 class="page-title">Dashboard Analytics</h2>
+                
+                <!-- Analytics Charts -->
+                <div class="analytics-section">
+                    <h3>Analytics & Insights</h3>
+                    
+                    <!-- Charts Grid -->
+                    <div class="charts-grid">
+                        <!-- Pet Distribution Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h4><i class="fas fa-paw"></i> Pet Distribution by Type</h4>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="petTypeChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Revenue Trend Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h4><i class="fas fa-chart-line"></i> Revenue Trend (Last 7 Days)</h4>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="revenueTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Age Distribution Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h4><i class="fas fa-chart-bar"></i> Pet Age Distribution</h4>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="petAgeChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Service Types Chart -->
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h4><i class="fas fa-chart-pie"></i> Popular Services</h4>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="serviceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pet Categories Page -->
+        <div id="pets-page" class="page">
+            <div class="page-container">
+                <div class="page-header">
+                    <h2 class="page-title">🐶 Pet Management (UC.2.0 - UC.2.4)</h2>
+                    <button class="btn-primary" onclick="toggleForm('pet-form')">
+                        <i class="fas fa-plus"></i> Add New Pet (UC.2.2)
+                    </button>
+                </div>
+
+                <!-- Add Pet Form -->
+                <div id="pet-form" class="form-modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Add New Pet</h3>
+                            <button class="close-btn" onclick="toggleForm('pet-form')">&times;</button>
+                        </div>
+                        <form class="pet-form-content">
+                            <div class="form-group">
+                                <label for="pet-name">Pet Name *</label>
+                                <input type="text" id="pet-name" placeholder="Enter pet name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="pet-type">Pet Type *</label>
+                                <select id="pet-type" required>
+                                    <option value="">Select type</option>
+                                    <option value="Dog">Dog</option>
+                                    <option value="Cat">Cat</option>
+                                    <option value="Rabbit">Rabbit</option>
+                                    <option value="Bird">Bird</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="pet-breed">Breed</label>
+                                <input type="text" id="pet-breed" placeholder="Enter breed">
+                            </div>
+                            <div class="form-group">
+                                <label for="pet-age">Age (months)</label>
+                                <input type="number" id="pet-age" placeholder="Enter age in months">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="toggleForm('pet-form')">Cancel</button>
+                                <button type="submit" class="btn-primary">Save Pet</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Search and Filter -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-pet" onkeyup="searchPet()" placeholder="Search Pet by Name (UC.2.1)">
+                    </div>
+                </div>
+
+                <!-- Pet Table -->
+                <div class="table-container">
+                    <h3>Pet List (UC.2.0)</h3>
+                    <div class="table-wrapper">
+                        <table id="pet-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Breed</th>
+                                    <th>Age</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoices Page -->
+        <div id="invoices-page" class="page">
+            <div class="page-container">
+                <div class="page-header">
+                    <h2 class="page-title">🧾 Invoice Management (UC.3.0 - UC.3.5)</h2>
+                    <button class="btn-primary" onclick="toggleForm('invoice-form')">
+                        <i class="fas fa-plus"></i> Add New Invoice (UC.3.3)
+                    </button>
+                </div>
+
+                <!-- Add Invoice Form -->
+                <div id="invoice-form" class="form-modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Create New Invoice</h3>
+                            <button class="close-btn" onclick="toggleForm('invoice-form')">&times;</button>
+                        </div>
+                        <form class="invoice-form-content">
+                            <div class="form-group">
+                                <label for="customer-name">Customer Name *</label>
+                                <input type="text" id="customer-name" placeholder="Enter customer name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="invoice-amount">Amount ($) *</label>
+                                <input type="number" id="invoice-amount" placeholder="Enter amount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="invoice-detail">Service Details</label>
+                                <textarea id="invoice-detail" placeholder="Enter service details" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="toggleForm('invoice-form')">Cancel</button>
+                                <button type="submit" class="btn-primary">Create Invoice</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-invoice" onkeyup="searchInvoice()" placeholder="Search Invoice by Customer (UC.3.2)">
+                    </div>
+                </div>
+
+                <!-- Invoice Table -->
+                <div class="table-container">
+                    <h3>Invoice List (UC.3.0)</h3>
+                    <div class="table-wrapper">
+                        <table id="invoice-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Customer</th>
+                                    <th>Amount ($)</th>
+                                    <th>Details</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <img src="img/PetCare_Logo_300x76 (1).png" alt="PETCARE Logo" class="footer-logo-img">
+                </div>
+                <p class="footer-description">
+                    Professional Pet Management System for Staff Operations
+                </p>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Useful Links</h4>
+                <ul class="footer-links">
+                    <li><a href="#" onclick="showPage('dashboard')">Dashboard</a></li>
+                    <li><a href="#" onclick="showPage('pets')">Pet Categories</a></li>
+                    <li><a href="#" onclick="showPage('invoices')">Invoices</a></li>
+                    <li><a href="#">Help & Support</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-envelope"></i> support@petcare.com</p>
+                    <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Pet Street, Animal City</p>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h4>System Info</h4>
+                <div class="system-info">
+                    <p>Version: 1.0.0</p>
+                    <p>Last Update: Nov 2025</p>
+                    <p>Status: <span class="status-online">Online</span></p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <p>&copy; 2025 PETCARE. All rights reserved.</p>
+                <div class="developers">
+                    <small>Developed by: Hồ Du Tuấn Đạt | Nguyễn Thị Phương Nhung | Nguyễn Minh Chính</small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Overlays -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeAllModals()"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
