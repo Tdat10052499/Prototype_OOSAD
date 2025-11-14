@@ -166,6 +166,46 @@
                     </div>
                 </div>
 
+                <!-- Update Pet Form -->
+                <div id="update-pet-form" class="form-modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Update Pet Information</h3>
+                            <button class="close-btn" onclick="toggleForm('update-pet-form')">&times;</button>
+                        </div>
+                        <form class="update-pet-form-content">
+                            <input type="hidden" id="update-pet-id">
+                            <div class="form-group">
+                                <label for="update-pet-name">Pet Name *</label>
+                                <input type="text" id="update-pet-name" placeholder="Enter pet name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="update-pet-type">Pet Type *</label>
+                                <select id="update-pet-type" required>
+                                    <option value="">Select type</option>
+                                    <option value="Dog">Dog</option>
+                                    <option value="Cat">Cat</option>
+                                    <option value="Rabbit">Rabbit</option>
+                                    <option value="Bird">Bird</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="update-pet-breed">Breed</label>
+                                <input type="text" id="update-pet-breed" placeholder="Enter breed">
+                            </div>
+                            <div class="form-group">
+                                <label for="update-pet-age">Age (months)</label>
+                                <input type="number" id="update-pet-age" placeholder="Enter age in months">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="toggleForm('update-pet-form')">Cancel</button>
+                                <button type="submit" class="btn-primary">Update Pet</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
                 <!-- Search and Filter -->
                 <div class="search-section">
                     <div class="search-bar">
@@ -230,6 +270,35 @@
                             <div class="form-actions">
                                 <button type="button" class="btn-secondary" onclick="toggleForm('invoice-form')">Cancel</button>
                                 <button type="submit" class="btn-primary">Create Invoice</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Update Invoice Form -->
+                <div id="update-invoice-form" class="form-modal hidden">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Update Invoice Information</h3>
+                            <button class="close-btn" onclick="toggleForm('update-invoice-form')">&times;</button>
+                        </div>
+                        <form class="update-invoice-form-content">
+                            <input type="hidden" id="update-invoice-id">
+                            <div class="form-group">
+                                <label for="update-customer-name">Customer Name *</label>
+                                <input type="text" id="update-customer-name" placeholder="Enter customer name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="update-invoice-amount">Amount ($) *</label>
+                                <input type="number" id="update-invoice-amount" placeholder="Enter amount" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="update-invoice-detail">Service Details</label>
+                                <textarea id="update-invoice-detail" placeholder="Enter service details" rows="3"></textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" onclick="toggleForm('update-invoice-form')">Cancel</button>
+                                <button type="submit" class="btn-primary">Update Invoice</button>
                             </div>
                         </form>
                     </div>

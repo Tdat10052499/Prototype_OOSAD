@@ -166,32 +166,58 @@ function addPet() {
     showSuccessDialog('Pet Added Successfully!', `${name} (${type}) has been added to the system.`);
 }
 
-// UC.2.3: Update Pet
+// UC.2.3: Update Pet - Open form with pet data
 function updatePetPrompt(id) {
     const pet = pets.find(p => p.id === id);
     if (!pet) return;
 
-    const newName = prompt(`Tên mới cho Pet ID ${id} (hiện tại: ${pet.name}):`, pet.name);
-    if (newName === null) return;
+    // Điền dữ liệu vào form
+    document.getElementById('update-pet-id').value = pet.id;
+    document.getElementById('update-pet-name').value = pet.name;
+    document.getElementById('update-pet-type').value = pet.type;
+    document.getElementById('update-pet-breed').value = pet.breed || '';
+    document.getElementById('update-pet-age').value = pet.age || '';
     
-    const newType = prompt(`Loại mới cho Pet ID ${id} (hiện tại: ${pet.type}):`, pet.type);
-    if (newType === null) return;
-    
-    const newBreed = prompt(`Giống mới cho Pet ID ${id} (hiện tại: ${pet.breed || 'N/A'}):`, pet.breed || '');
-    if (newBreed === null) return;
-    
-    const newAge = prompt(`Tuổi mới cho Pet ID ${id} (hiện tại: ${pet.age || 'N/A'} tháng):`, pet.age || '');
-    if (newAge === null) return;
+    // Hiển thị form
+    toggleForm('update-pet-form');
+}
 
-    // Cập nhật dữ liệu
-    pet.name = newName || pet.name;
-    pet.type = newType || pet.type;
-    pet.breed = newBreed || pet.breed;
-    pet.age = newAge ? parseInt(newAge) : pet.age;
+// UC.2.3: Update Pet - Submit form
+function updatePet(e) {
+    e.preventDefault();
     
-    renderPetList();
-    showNotification(`Pet "${pet.name}" đã được cập nhật!`, 'success');
-    showSuccessDialog('Pet Updated Successfully!', `${pet.name} information has been updated.`);
+    const id = parseInt(document.getElementById('update-pet-id').value);
+    const name = document.getElementById('update-pet-name').value.trim();
+    const type = document.getElementById('update-pet-type').value;
+    const breed = document.getElementById('update-pet-breed').value.trim();
+    const age = document.getElementById('update-pet-age').value.trim();
+
+    if (!name || !type) {
+        showNotification('Vui lòng điền đầy đủ thông tin bắt buộc!', 'error', 'Missing Information');
+        return;
+    }
+
+    // Tìm và cập nhật pet
+    const pet = pets.find(p => p.id === id);
+    if (pet) {
+        pet.name = name;
+        pet.type = type;
+        pet.breed = breed;
+        pet.age = age ? parseInt(age) : null;
+        
+        renderPetList();
+        if (charts.petType) {
+            refreshCharts();
+        }
+        
+        // Đóng modal và reset form
+        toggleForm('update-pet-form');
+        document.querySelector('.update-pet-form-content').reset();
+        
+        // Hiển thị thông báo và dialog thành công
+        showNotification(`Pet "${name}" đã được cập nhật!`, 'success');
+        showSuccessDialog('Pet Updated Successfully!', `${name} (${type}) information has been updated.`);
+    }
 }
 
 // UC.2.4: Delete Pet
@@ -305,34 +331,60 @@ function addInvoice() {
     showSuccessDialog('Invoice Created Successfully!', `Invoice #${newInvoice.id} for ${customer} ($${amount}) has been created.`);
 }
 
-// UC.3.4: Update Invoice
+// UC.3.4: Update Invoice - Open form with invoice data
 function updateInvoicePrompt(id) {
     const invoice = invoices.find(i => i.id === id);
     if (!invoice) return;
 
-    const newCustomer = prompt(`Tên khách hàng mới cho Invoice ID ${id} (hiện tại: ${invoice.customer}):`, invoice.customer);
-    if (newCustomer === null) return;
+    // Điền dữ liệu vào form
+    document.getElementById('update-invoice-id').value = invoice.id;
+    document.getElementById('update-customer-name').value = invoice.customer;
+    document.getElementById('update-invoice-amount').value = invoice.amount;
+    document.getElementById('update-invoice-detail').value = invoice.detail || '';
     
-    const newAmount = prompt(`Số tiền mới cho Invoice ID ${id} (hiện tại: $${invoice.amount}):`, invoice.amount);
-    if (newAmount === null) return;
-    
-    const newDetail = prompt(`Chi tiết mới cho Invoice ID ${id} (hiện tại: ${invoice.detail}):`, invoice.detail);
-    if (newDetail === null) return;
+    // Hiển thị form
+    toggleForm('update-invoice-form');
+}
 
-    // Validate amount
-    if (newAmount && isNaN(parseFloat(newAmount))) {
-        showNotification("Số tiền không hợp lệ. Vui lòng nhập số hợp lệ.", 'error');
+// UC.3.4: Update Invoice - Submit form
+function updateInvoice(e) {
+    e.preventDefault();
+    
+    const id = parseInt(document.getElementById('update-invoice-id').value);
+    const customer = document.getElementById('update-customer-name').value.trim();
+    const amount = parseFloat(document.getElementById('update-invoice-amount').value);
+    const detail = document.getElementById('update-invoice-detail').value.trim();
+
+    if (!customer || !amount) {
+        showNotification('Vui lòng điền đầy đủ thông tin bắt buộc!', 'error', 'Missing Information');
         return;
     }
 
-    // Cập nhật dữ liệu
-    invoice.customer = newCustomer || invoice.customer;
-    invoice.amount = newAmount ? parseFloat(newAmount) : invoice.amount;
-    invoice.detail = newDetail || invoice.detail;
-    
-    renderInvoiceList();
-    showNotification(`Invoice #${id} đã được cập nhật!`, 'success');
-    showSuccessDialog('Invoice Updated Successfully!', `Invoice #${id} for ${invoice.customer} has been updated.`);
+    if (isNaN(amount) || amount <= 0) {
+        showNotification('Số tiền không hợp lệ. Vui lòng nhập số hợp lệ.', 'error', 'Invalid Amount');
+        return;
+    }
+
+    // Tìm và cập nhật invoice
+    const invoice = invoices.find(i => i.id === id);
+    if (invoice) {
+        invoice.customer = customer;
+        invoice.amount = amount;
+        invoice.detail = detail || "General Service";
+        
+        renderInvoiceList();
+        if (charts.revenueTrend) {
+            refreshCharts();
+        }
+        
+        // Đóng modal và reset form
+        toggleForm('update-invoice-form');
+        document.querySelector('.update-invoice-form-content').reset();
+        
+        // Hiển thị thông báo và dialog thành công
+        showNotification(`Invoice #${id} đã được cập nhật!`, 'success');
+        showSuccessDialog('Invoice Updated Successfully!', `Invoice #${id} for ${customer} has been updated.`);
+    }
 }
 
 // Delete Invoice
@@ -768,10 +820,22 @@ document.addEventListener('DOMContentLoaded', () => {
         addPet();
     });
 
+    // Event listeners cho Update Pet Form
+    document.querySelector('.update-pet-form-content').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updatePet(e);
+    });
+
     // Event listeners cho Invoice Form  
     document.querySelector('.invoice-form-content').addEventListener('submit', function(e) {
         e.preventDefault();
         addInvoice();
+    });
+
+    // Event listeners cho Update Invoice Form
+    document.querySelector('.update-invoice-form-content').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateInvoice(e);
     });
     
     // Event listener cho ESC key để đóng modal và dialogs
